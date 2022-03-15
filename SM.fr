@@ -12,14 +12,14 @@
 (* ************************** *)
 (* *****  Information   ***** *)
 (* ************************** *)
-M$ModelName = "SM_kWkZ";
+M$ModelName = "Standard Model";
 
 M$Information = {
-  Authors      -> {"N. Christensen", "C. Duhr", "B. Fuks", "Y. Wu"}, 
+  Authors      -> {"N. Christensen", "C. Duhr", "B. Fuks"}, 
   Version      -> "1.4.7",
   Date         -> "28. 09. 2016",
-  Institutions -> {"Michigan State University", "Universite catholique de Louvain (CP3)", "IPHC Strasbourg / University of Strasbourg","Carleton University"},
-  Emails       -> {"neil@pa.msu.edu", "claude.duhr@uclouvain.be", "benjamin.fuks@cnrs.in2p3.fr", "ycwu@physics.carleton.ca"},
+  Institutions -> {"Michigan State University", "Universite catholique de Louvain (CP3)", "IPHC Strasbourg / University of Strasbourg"},
+  Emails       -> {"neil@pa.msu.edu", "claude.duhr@uclouvain.be", "benjamin.fuks@cnrs.in2p3.fr"},
   URLs         -> "http://feynrules.phys.ucl.ac.be/view/Main/StandardModel"
 };
 
@@ -37,7 +37,6 @@ FR$RmDblExt = { ymb -> MB, ymc -> MC, ymdo -> MD, yme -> Me,
 (* *****  Change  log   ***** *)
 (* ************************** *)
 
-(* v1.4.7-01: Add scale factor for hWW and hZZ couplings                     *)
 (* v1.4.7: Index issue with the ghost Lagrangian (special thanks to S. Iwamoto *)
 (* v1.4.6: NLO variable added.                                               *)
 (* v1.4.5: Added widths for ghosts.                                          *)
@@ -114,9 +113,7 @@ IndexStyle[Generation, f];
 
 M$InteractionOrderHierarchy = {
   {QCD, 1},
-  {QED, 2},
-  {CHZZ,2},
-  {CHWW,2}
+  {QED, 2}
 };
 
 
@@ -570,22 +567,6 @@ M$Parameters = {
     TeX           -> Subscript[\[Theta], c],
     Description   -> "Cabibbo angle"
   },
-  kZ == {
-    ParameterType -> External,
-    BlockName     -> KAPPABLOCK,
-    OrderBlock    -> 1,
-    Value         -> 1.01,
-    TeX           -> Subscript[\[Kappa], Z],
-    Description   -> "kappa Z"
-  },
-  kW == {
-    ParameterType -> External,
-    BlockName     -> KAPPABLOCK,
-    OrderBlock    -> 2,
-    Value         -> 1.02,
-    TeX           -> Subscript[\[Kappa], W],
-    Description   -> "kappa W"
-  },
 
   (* Internal Parameters *)
   aEW == {
@@ -653,18 +634,6 @@ M$Parameters = {
     InteractionOrder -> {QED,-1},
     Description      -> "Higgs vacuum expectation value"
   },
-  ghZZ == {
-    ParameterType    -> Internal,
-    Value            -> ee^2 vev/2/sw^2/cw^2, 
-    InteractionOrder -> {CHZZ,1},
-    Description      -> "hZZ SM coupling"
-  },
-  ghWW == {
-    ParameterType    -> Internal,
-    Value            -> ee^2 vev/2/sw^2, 
-    InteractionOrder -> {CHWW,1},
-    Description      -> "hWW SM coupling"
-  },
   lam == {
     ParameterType    -> Internal,
     Value            -> MH^2/(2*vev^2),
@@ -731,11 +700,10 @@ LFermions := Block[{mu},
     QLbar.Ga[mu].DC[QL, mu] + LLbar.Ga[mu].DC[LL, mu] + uRbar.Ga[mu].DC[uR, mu] + dRbar.Ga[mu].DC[dR, mu] + lRbar.Ga[mu].DC[lR, mu]), 
   FlavorExpand->{SU2W,SU2D}]/.{CKM[a_,b_] Conjugate[CKM[a_,c_]]->IndexDelta[b,c], CKM[b_,a_] Conjugate[CKM[c_,a_]]->IndexDelta[b,c]}];
 
-LHiggs := Block[{ii,mu, feynmangaugerules,LOrig},
+LHiggs := Block[{ii,mu, feynmangaugerules},
   feynmangaugerules = If[Not[FeynmanGauge], {G0|GP|GPbar ->0}, {}];
  
-  LOrig=ExpandIndices[DC[Phibar[ii],mu] DC[Phi[ii],mu] + muH^2 Phibar[ii] Phi[ii] - lam Phibar[ii] Phi[ii] Phibar[jj] Phi[jj], FlavorExpand->{SU2D,SU2W}]/.feynmangaugerules;
-  LOrig + (1/2 ghZZ kZ - ee^2 vev/4/sw^2/cw^2 (cw^4 + 2 sw^2 cw^2 + sw^4) ) H Z[mu] Z[mu] + ( ghWW kW - ee^2 vev/2/sw^2 ) H W[mu] Wbar[mu]
+  ExpandIndices[DC[Phibar[ii],mu] DC[Phi[ii],mu] + muH^2 Phibar[ii] Phi[ii] - lam Phibar[ii] Phi[ii] Phibar[jj] Phi[jj], FlavorExpand->{SU2D,SU2W}]/.feynmangaugerules
  ];
 
 LYukawa := Block[{sp,ii,jj,cc,ff1,ff2,ff3,yuk,feynmangaugerules},

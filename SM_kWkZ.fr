@@ -1,0 +1,75 @@
+(***************************************************************************************************************)
+(******                       This is the FeynRules mod-file for the Standard model                       ******)
+(******                                                                                                   ******)
+(******     Authors: N. Christensen, C. Duhr, B. Fuks                                                     ******)
+(******                                                                                                   ******)
+(****** Choose whether Feynman gauge is desired.                                                          ******)
+(****** If set to False, unitary gauge is assumed.                                                          ****)
+(****** Feynman gauge is especially useful for CalcHEP/CompHEP where the calculation is 10-100 times faster. ***)
+(****** Feynman gauge is not supported in MadGraph and Sherpa.                                              ****)
+(***************************************************************************************************************)
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "SM_kWkZ";
+
+M$Information = {
+  Authors      -> {"Yongcheng Wu"},
+  Version      -> "1.0.0",
+  Date         -> "15. 03. 2022",
+  Institutions -> {"Oklahoma State University"},
+  Emails       -> {"ycwu0830@gmail.com"}
+};
+
+FeynmanGauge = True;
+
+
+M$InteractionOrderHierarchy = {
+  {CHZZ,2},
+  {CHWW,2}
+};
+
+
+(* ************************** *)
+(* ***** New Parameters ***** *)
+(* ************************** *)
+M$Parameters = {
+
+  kZ == {
+    ParameterType -> External,
+    BlockName     -> KAPPABLOCK,
+    OrderBlock    -> 1,
+    Value         -> 1.01,
+    TeX           -> Subscript[\[Kappa], Z],
+    Description   -> "kappa Z"
+  },
+  kW == {
+    ParameterType -> External,
+    BlockName     -> KAPPABLOCK,
+    OrderBlock    -> 2,
+    Value         -> 1.02,
+    TeX           -> Subscript[\[Kappa], W],
+    Description   -> "kappa W"
+  },
+  ghZZ == {
+    ParameterType    -> Internal,
+    Value            -> ee^2 vev/2/sw^2/cw^2,
+    InteractionOrder -> {CHZZ,1},
+    Description      -> "hZZ SM coupling"
+  },
+  ghWW == {
+    ParameterType    -> Internal,
+    Value            -> ee^2 vev/2/sw^2,
+    InteractionOrder -> {CHWW,1},
+    Description      -> "hWW SM coupling"
+  }
+};
+
+(* ************************** *)
+(* *****   Lagrangian   ***** *)
+(* ************************** *)
+
+LExtra := Block[{mu},
+  (1/2 ghZZ kZ - ee^2 vev/4/sw^2/cw^2 (cw^4 + 2 sw^2 cw^2 + sw^4) ) H Z[mu] Z[mu] + ( ghWW kW - ee^2 vev/2/sw^2 ) H W[mu] Wbar[mu]
+ ];
